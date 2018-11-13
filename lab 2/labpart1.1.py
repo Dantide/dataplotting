@@ -1,4 +1,6 @@
 # import plotly
+import math
+import numpy
 import plotly.plotly as py
 import plotly.graph_objs as go
 # plotly.tools.set_credentials_file(username='Dantide', api_key='yxopUzjN78CLtRZ5Kl0i')
@@ -154,7 +156,24 @@ layout = dict(title="Terminal Characteristic LEDs",
               font={'color': "#000", 'size': 16}
 )
 fig = dict(data=data, layout=layout)
-py.plot(fig, filename="Lab 2.1.1: LED IV Plots")
+# py.plot(fig, filename="Lab 2.1.1: LED IV Plots")
+
+def modeled_blue(i):
+    I0 = 99e-9
+    ktq = 25.86
+    n = 0.5
+    Rser = 0.7
+    return n * ktq * math.log(i/I0) + i * Rser
+
+# Plotting Blue with modeled data
+trace1 = trace2
+
+trace2 = go.Scatter(
+    x=null,
+    y=null,
+    name='Modeled Blue LED',
+    mode='lines'
+)
 
 
 # Plotting Log Current vs Voltage
@@ -246,4 +265,4 @@ layout = dict(title="Log Current vs Voltage LEDs",
               plot_bgcolor='rgba(255,255,255,1)',
               font={'color': "#000", 'size': 16})
 fig = dict(data=data, layout=layout)
-py.plot(fig, filename="Lab 2.1.1: LED Log Current Plots")
+# py.plot(fig, filename="Lab 2.1.1: LED Log Current Plots")
