@@ -1,12 +1,14 @@
 import plotly
 import math
+import numpy
 import plotly.plotly as py
 import plotly.graph_objs as go
 plotly.tools.set_credentials_file(username='Dantide', api_key='yxopUzjN78CLtRZ5Kl0i')
 
+
 def parse_data(file_name):
     """Parse through a data file for section 1.1 of ECE 2100 lab 4."""
-    assert(isinstance(file_name, str))
+    assert (isinstance(file_name, str))
     file_path = open(file_name, 'r')
     file_path.readline()
     frequency = []
@@ -36,11 +38,43 @@ single_box_phase = single_box_lists[4]
 single_box_log_freq = list(map(lambda x: math.log10(x), single_box_freq))
 single_box_log_impedance = list(map(lambda x: math.log10(x), single_box_impedance))
 
+R_L_SER: float = 3  # Ohms
+L: float = 1.246 * (10 ** -3)  # Henry's
+ind_break_freq: float = 383.198  # Hz
+C: float = 1.4246 * (10 ** -9)  # Farads
+R: float = 959  # Ohms
+
+
+def impedance_model(freq_list):
+    magnitude = []
+    phase = []
+    for freq in freq_list:
+        omega = 2 * math.pi * freq
+        if True:
+            denom: float = (R + R_L_SER) ** 2 + (omega * L - (1 / (omega * C))) ** 2
+            real: float = (R * (R_L_SER ** 2 + (omega * L) ** 2) +
+                           R_L_SER * (R ** 2 + (1 / ((omega * C) ** 2)))) / denom
+            imaj: float = (omega * (R ** 2) * L -
+                           (R_L_SER ** 2 / (omega * C)) -
+                           (L / C) * (omega * L - (1 / (omega * C)))) / denom
+            mag: float = math.sqrt(real ** 2 + imaj ** 2)
+            ang: float = (math.atan(imaj / real) / (2 * math.pi)) * 360
+
+            magnitude.append(mag)
+            phase.append(ang)
+    return [freq_list, magnitude, phase]
+
+
+freq_sweep = numpy.logspace(1, 6, num=100)
+modeled_data = impedance_model(freq_sweep)
+modeled_magnitude = modeled_data[1]
+modeled_phase = modeled_data[2]
+
 
 trace1 = go.Scatter(
     x=single_box_freq,
     y=single_box_impedance,
-    name='Single Box Responce',
+    name='Single Box Response',
     mode='lines+markers',
     line=dict(
         color='rgb(0,0,0)',
@@ -52,24 +86,57 @@ trace1 = go.Scatter(
     )
 )
 
-data = [trace1]
+trace2 = go.Scatter(
+    x=freq_sweep,
+    y=modeled_magnitude,
+    name='Modelled Circuit',
+    mode='lines',
+    line=dict(
+        color='rgb(200,0,0)',
+        width=4,
+    ),
+)
+
+data = [trace1, trace2]
 layout = dict(title="Log Impedance Magnitude vs Log Frequency",
-              xaxis={'title': "Log Input Frequency", 'gridcolor': '#bdbdbd',
-                     'type': 'log', 'dtick': "D1", 'ticks': 'outside',
-                     'autorange': True, 'exponentformat': 'power'},
-              yaxis={'title': "Log Impedance Magnitude (Ohms)", 'gridcolor': '#bdbdbd',
-                     'type': 'log', 'exponentformat': 'power', 'autorange': True},
+              xaxis=dict(
+                  title="Log Input Frequency",
+                  gridcolor='#bdbdbd',
+                  type='log',
+                  dtick="D1",
+                  ticks='outside',
+                  autorange=True,
+                  exponentformat='power',
+                  linecolor='black',
+                  linewidth=1,
+                  mirror=True,
+                  titlefont=dict(
+                      size=24
+                  )
+              ),
+              yaxis=dict(
+                  title="Log Impedance Magnitude (Ohms)",
+                  gridcolor='#bdbdbd',
+                  type='log',
+                  exponentformat='power',
+                  autorange=True,
+                  linecolor='black',
+                  linewidth=1,
+                  mirror=True,
+                  titlefont=dict(
+                      size=24
+                  )
+              ),
               paper_bgcolor='rgba(255,255,255,1)',
               plot_bgcolor='rgba(255,255,255,1)',
               font={'color': "#000", 'size': 16})
 fig = dict(data=data, layout=layout)
 py.plot(fig, filename="Lab 5: Single Box Impedance Magnitude")
 
-
 trace1 = go.Scatter(
     x=single_box_freq,
     y=single_box_phase,
-    name='Single Box Responce',
+    name='Single Box Response',
     mode='lines+markers',
     line=dict(
         color='rgb(0,0,0)',
@@ -81,13 +148,45 @@ trace1 = go.Scatter(
     )
 )
 
-data = [trace1]
+trace2 = go.Scatter(
+    x=freq_sweep,
+    y=modeled_phase,
+    name='Modelled Circuit',
+    mode='lines',
+    line=dict(
+        color='rgb(200,0,0)',
+        width=4,
+    ),
+)
+
+data = [trace1, trace2]
 layout = dict(title="Impedance Phase vs Log Frequency",
-              xaxis={'title': "Log Input Frequency", 'gridcolor': '#bdbdbd',
-                     'type': 'log', 'dtick': "D1", 'ticks': 'outside',
-                     'autorange': True, 'exponentformat': 'power'},
-              yaxis={'title': "Impedance Phase", 'gridcolor': '#bdbdbd',
-                     'autorange': True},
+              xaxis=dict(
+                  title="Log Input Frequency",
+                  gridcolor='#bdbdbd',
+                  type='log',
+                  dtick="D1",
+                  ticks='outside',
+                  autorange=True,
+                  exponentformat='power',
+                  linecolor='black',
+                  linewidth=1,
+                  mirror=True,
+                  titlefont=dict(
+                      size=24
+                  )
+              ),
+              yaxis=dict(
+                  title="Impedance Phase",
+                  gridcolor='#bdbdbd',
+                  autorange=True,
+                  linecolor='black',
+                  linewidth=1,
+                  mirror=True,
+                  titlefont=dict(
+                      size=24
+                  )
+              ),
               paper_bgcolor='rgba(255,255,255,1)',
               plot_bgcolor='rgba(255,255,255,1)',
               font={'color': "#000", 'size': 16})
