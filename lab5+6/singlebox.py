@@ -7,7 +7,7 @@ plotly.tools.set_credentials_file(username='Dantide', api_key='yxopUzjN78CLtRZ5K
 
 
 def parse_data(file_name):
-    """Parse through a data file for section 1.1 of ECE 2100 lab 4."""
+    """Parse through a data file for singleport data for ECE 2100 lab 5."""
     assert (isinstance(file_name, str))
     file_path = open(file_name, 'r')
     file_path.readline()
