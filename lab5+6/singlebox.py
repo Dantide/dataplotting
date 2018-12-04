@@ -131,7 +131,7 @@ layout = dict(title="Log Impedance Magnitude vs Log Frequency",
               plot_bgcolor='rgba(255,255,255,1)',
               font={'color': "#000", 'size': 16})
 fig = dict(data=data, layout=layout)
-py.plot(fig, filename="Lab 5: Single Box Impedance Magnitude")
+# py.plot(fig, filename="Lab 5: Single Box Impedance Magnitude")
 
 trace1 = go.Scatter(
     x=single_box_freq,
@@ -191,4 +191,112 @@ layout = dict(title="Impedance Phase vs Log Frequency",
               plot_bgcolor='rgba(255,255,255,1)',
               font={'color': "#000", 'size': 16})
 fig = dict(data=data, layout=layout)
-py.plot(fig, filename="Lab 5: Single Box Impedance Phase")
+# py.plot(fig, filename="Lab 5: Single Box Impedance Phase")
+
+
+trace1 = go.Scatter(
+    x=single_box_freq,
+    y=single_box_impedance,
+    name='Single Box Response',
+    mode='lines+markers',
+    line=dict(
+        color='rgb(0,0,0)',
+        width=4,
+        dash='solid'
+    ),
+    marker=dict(
+        size=7,
+        color='rgb(0,0,0)'
+    )
+)
+
+trace2 = go.Scatter(
+    x=freq_sweep,
+    y=modeled_magnitude,
+    name='Modelled Circuit',
+    mode='lines',
+    line=dict(
+        color='rgb(200,0,0)',
+        width=4,
+        dash='solid'
+    ),
+)
+
+trace3 = go.Scatter(
+    x=single_box_freq,
+    y=single_box_phase,
+    name='Single Box Response',
+    mode='lines+markers',
+    line=dict(
+        color='rgb(0,0,0)',
+        width=4,
+        dash='dot'
+    ),
+    marker=dict(
+        size=7,
+        color='rgb(0,0,0)'
+    ),
+    yaxis='y2'
+)
+
+trace4 = go.Scatter(
+    x=freq_sweep,
+    y=modeled_phase,
+    name='Modelled Circuit',
+    mode='lines',
+    line=dict(
+        color='rgb(200,0,0)',
+        width=4,
+        dash='dot'
+    ),
+    yaxis='y2'
+)
+
+data = [trace1, trace2, trace3, trace4]
+layout = dict(title="Measured and Model Data",
+              xaxis=dict(
+                  title="Log Input Frequency",
+                  gridcolor='#bdbdbd',
+                  type='log',
+                  dtick="D1",
+                  ticks='outside',
+                  autorange=True,
+                  exponentformat='power',
+                  linecolor='black',
+                  linewidth=1,
+                  mirror=True,
+                  titlefont=dict(
+                      size=24
+                  )
+              ),
+              yaxis=dict(
+                  title="Log Impedance Magnitude (Ohms)",
+                  gridcolor='#bdbdbd',
+                  type='log',
+                  exponentformat='power',
+                  autorange=True,
+                  linecolor='black',
+                  linewidth=1,
+                  mirror=True,
+                  titlefont=dict(
+                      size=24
+                  )
+              ),
+              yaxis2=dict(
+                  title="Impedance Phase",
+                  gridcolor='#bdbdbd',
+                  autorange=True,
+                  linecolor='black',
+                  linewidth=1,
+                  mirror=True,
+                  titlefont=dict(
+                      size=24
+                  ),
+                  overlaying='y',
+                  side='right'
+              ),
+              paper_bgcolor='rgba(255,255,255,1)',
+              plot_bgcolor='rgba(255,255,255,1)',
+              font={'color': "#000", 'size': 16})
+fig = dict(data=data, layout=layout)
+py.plot(fig, filename="Lab 5: Single Box Everything")
