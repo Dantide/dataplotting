@@ -13,7 +13,21 @@ R_5 = 419.06241 * (10 ** 3) # Ohms
 R_6 = 60.445164 * (10 ** 3) # Ohms
 R_7 = 25.0 * (10 ** 3) # Ohms
 R_8 = 475.0 * (10 ** 3) # Ohms
-C_1 = C_2 = C_3 = C_4 = 1.0 * (10 ** -9) # Farads
+C_1 = C_2 = C_3 = C_4 = C = 1.0 * (10 ** -9) # Farads
+
+
+def transfer_function(freq_list) :
+    magnitude = []
+    phase = []
+    for freq in freq_list:
+        o = 2 * math.pi * freq
+        R_EQ = (2 * R_2 * R_3) / (2 * R_1 * R_3 - R_2 * R_4)
+        H = ((R_3 + R_4) / R_3) * (-o ** 2 / (-(o ** 2))
+                                   + complex((o * (2 / (R_EQ * C)) + 1 / (R_1 * R_2 * (C ** 2)))))
+        print(H)
+        magnitude.append(abs(H))
+        phase.append(1)
+    [magnitude, phase]
 
 
 def parse_data(file_name):
@@ -43,6 +57,11 @@ dual_port_freq = dual_port_lists[0]
 dual_port_transfer = dual_port_lists[3]
 dual_port_phase = dual_port_lists[4]
 
+freq_list = numpy.logspace(1, 5, num=100)
+modeled_data = transfer_function(freq_list)
+model_mag = modeled_data[0]
+model_phs = modeled_data[1]
+
 
 trace1 = go.Scatter(
     x=dual_port_freq,
@@ -59,7 +78,18 @@ trace1 = go.Scatter(
     )
 )
 
-data = [trace1]
+trace2 = go.Scatter(
+    x=freq_list,
+    y=modeled_mag,
+    name="Modelled Response",
+    mode='lines',
+    line=dict(
+        color='rgb(200,0,0)',
+        width=4
+    )
+)
+
+data = [trace1, trace2]
 layout = dict(
     title="Voltage Transfer Function vs Log Frequency",
     xaxis=dict(
@@ -114,7 +144,18 @@ trace1 = go.Scatter(
     )
 )
 
-data = [trace1]
+trace2 = go.Scatter(
+    x=freq_list,
+    y=modeled_phs,
+    name="Modelled Response",
+    mode='lines',
+    line=dict(
+        color='rgb(200,0,0)',
+        width=4
+    )
+)
+
+data = [trace1, trace2]
 layout = dict(
     title="Transfer Function Phase vs Log Frequency",
     xaxis=dict(
